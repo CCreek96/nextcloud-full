@@ -1,15 +1,16 @@
-FROM nextcloud:latest
+FROM nextcloud:27.0-apache
 
 RUN set -ex; \
     \
     apt-get update; \
     apt-get install -y --no-install-recommends \
         ffmpeg \
+        ghostscript \
         libmagickcore-6.q16-6-extra \
         procps \
         smbclient \
         supervisor \
-	libreoffice \
+#       libreoffice \
     ; \
     rm -rf /var/lib/apt/lists/*
 
@@ -33,7 +34,7 @@ RUN set -ex; \
     pecl install smbclient; \
     docker-php-ext-enable smbclient; \
     \
-    # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
+# reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
     apt-mark auto '.*' > /dev/null; \
     apt-mark manual $savedAptMark; \
     ldd "$(php -r 'echo ini_get("extension_dir");')"/*.so \
